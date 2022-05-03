@@ -13,7 +13,7 @@ contract Funzofi {
     uint256 public prizePool;
     
     mapping(address => uint) users;                         //  the users variable keep track of number of entries from a single account
-    mapping(string => int) public players;                         //  the players variable consits of the id od the players and their scores
+    mapping(string => int) public players;                  //  the players variable consits of the id od the players and their scores
     mapping(uint => mapping(address => string)) entries;    //  the entries variable consits of the team data formed by the user for a particular entry
     mapping(uint => int)[] public gameResult;
 
