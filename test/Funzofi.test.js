@@ -28,4 +28,8 @@ describe("Funzofi Contract Tests", () => {
   it("Owner Check", async () => {
     expect(await contract.owner()).to.equal(accounts[0].address);
   });
+
+  it("Game Status Check", async () => {
+    expect(await contract.gameStatus()).to.equal(0);
+  });
 });

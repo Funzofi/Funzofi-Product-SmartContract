@@ -22,8 +22,8 @@ contract Funzofi {
     address public owner;
 
     // all the variables holding the game data
-    uint256 counter     = 0;
-    status  gameStatus  = status.NOT_STARTED;
+    uint256        counter     = 0;
+    status  public gameStatus  = status.NOT_STARTED;
     uint256 public prizePool;
     uint256 public entryFee;
     
