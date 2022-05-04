@@ -10,14 +10,20 @@ contract Funzofi {
         bool    present;
     }
 
+    enum status {
+        NOT_STARTED,
+        ON_GOING,
+        ENDED
+    }
+
     // all the static variables holding the contract details
     string  public name;
     string  public gameDetails;
     address public owner;
 
     // all the variables holding the game data
-    uint256 counter = 0;
-
+    uint256 counter     = 0;
+    status  gameStatus  = status.NOT_STARTED;
     uint256 public prizePool;
     uint256 public entryFee;
     
