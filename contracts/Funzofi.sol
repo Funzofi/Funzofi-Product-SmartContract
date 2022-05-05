@@ -22,8 +22,8 @@ contract Funzofi {
     address public owner;
 
     // all the variables holding the game data
-    uint256        counter     = 0;
-    status  public gameStatus  = status.NOT_STARTED;
+    uint256        counter;
+    status  public gameStatus;
     uint256 public prizePool;
     uint256 public entryFee;
     
@@ -33,9 +33,11 @@ contract Funzofi {
     mapping(uint    => int)[]                       public  gameResult;     //  the gameResult variable consits of the final rank list of the team along with their score in a sorted manner
 
     constructor(string memory gameName, string memory description, uint fee, string[] memory playersList) {
+        counter     = 0;
         name        = gameName;
         gameDetails = description;
         entryFee    = fee;
+        gameStatus  = status.NOT_STARTED;
         owner       = msg.sender;
 
         // Loading the players data and initializing with 0 score
@@ -43,5 +45,19 @@ contract Funzofi {
             players[playersList[i]] = player(playersList[i], 0, true);
         }
     }
+
+    function enterGame() public {}
+
+    function startGame() public {}
+
+    function cancelGame() public {}
+
+    function endGame() public {}
+
+    function updateScore() public {}
+
+    function getWinnersList() public {}
+
+    function declareWinner() public {}
     
 }
