@@ -27,10 +27,19 @@ contract Funzofi {
     uint256 public prizePool;
     uint256 public entryFee;
     
-    mapping(address => uint)                                users;          //  the users variable keep track of number of entries from a single account
+    mapping(address => uint)                        public  users;          //  the users variable keep track of number of entries from a single account
     mapping(string  => player)                      public  players;        //  the players variable consits of the id od the players and their scores
     mapping(uint    => mapping(address => string[]))        entries;        //  the entries variable consits of the team data formed by the user for a particular entry
-    mapping(uint    => int)[]                       public  gameResult;     //  the gameResult variable consits of the final rank list of the team along with their score in a sorted manner
+    mapping(uint    => int)[]                               gameResult;     //  the gameResult variable consits of the final rank list of the team along with their score in a sorted manner
+
+    // Modifier to give access only to the owner of the contract
+    modifier onlyOwner(){
+        require(
+            msg.sender == owner, 
+            "Only the owner has access to this"
+        );
+        _;
+    }
 
     constructor(string memory gameName, string memory description, uint fee, string[] memory playersList) {
         counter     = 0;
@@ -46,18 +55,50 @@ contract Funzofi {
         }
     }
 
-    function enterGame() public {}
+    function enterGame(string[] memory teamList) payable public {
+        require(
+            gameStatus == status.ON_GOING && users[msg.sender] < 5,
+            "Sorry! You have exceeded the number of entries"
+        );
+        require(
+            msg.value == (entryFee * 1 ether),
+            "Sorry! Incorrect entry fee"
+        );
+        users[msg.sender]++;
+        for(uint i=0; i<teamList.length; i++){
+            if(players[teamList[i]].present){
+                entries[counter][msg.sender].push(teamList[i]);
+            } else {
+                revert();
+            }
+        }
+        counter++;
+    }
 
-    function startGame() public {}
+    function startGame() public onlyOwner {
+        gameStatus = status.ON_GOING;
+    }
 
-    function cancelGame() public {}
+    function cancelGame() public onlyOwner {}
 
-    function endGame() public {}
+    function endGame() public onlyOwner {
+        gameStatus = status.ENDED;
+    }
 
-    function updateScore() public {}
+    function updateScore() public onlyOwner {}
 
-    function getWinnersList() public {}
+    function getWinnersList() public view returns(uint[] memory) {
+        // require(
+        //     gameStatus == status.ENDED,
+        //     "Sorry! The Game hasn't ended yet ended"
+        // );
+        // uint[] memory list;
+        // for(uint i=0; i<gameResult.length; i++ ){
+        //     list.push(gameResult[i]);
+        // }
+        
+    }
 
-    function declareWinner() public {}
+    function declareWinner() public onlyOwner {}
     
 }
