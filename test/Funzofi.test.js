@@ -23,8 +23,6 @@ describe("Funzofi Contract Tests", () => {
     const player1   = await contract.players('dhoni');
     const player2   = await contract.players('test');
 
-    console.log(entryFee);
-
     assert(name == 'CSK vs KKR' && details == 'test description' && entryFee == 1);
     expect(player1.present).to.equal(true);
     expect(player1.score).to.equal(0);

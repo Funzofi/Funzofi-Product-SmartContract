@@ -10,11 +10,15 @@ async function main() {
 
   // We get the contract to deploy
   const Funzofi = await hre.ethers.getContractFactory("Funzofi");
-  const funzofi = await Funzofi.deploy("Hello, Hardhat!");
+  const funzofi = await Funzofi.deploy(
+    "CSK vs KKR", "test description", 
+    ethers.utils.parseEther("1.0"), 
+    ['dhoni', 'mahi', 'chahal', 'sachin']
+  );
 
   await funzofi.deployed();
 
-  console.log("Greeter deployed to:", funzofi.address);
+  console.log("Contract deployed to:", funzofi.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
