@@ -172,7 +172,10 @@ contract Funzofi {
     }
 
     function destroy() public onlyOwner {
-        require(msg.sender == owner, "You are not the owner");
+        require(
+            msg.sender == owner && gameStatus == status.COMPLETED, 
+            "You are not the owner"
+        );
         selfdestruct(payable(owner));
     }
 
