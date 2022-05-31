@@ -3,25 +3,24 @@ pragma solidity ^0.8.13;
 
 import './Funzofi.sol';
 
-contract FunzofiFactory {
+contract Factory {
+    Funzofi[] public FunzofiGames;
+    event GameCreated(
+        uint id,
+        address gameAddress
+    );
 
-    address public owner;
-    Funzofi[] public FunzofiArray;
-
-    constructor() {
-        owner = msg.sender;
-    }
-
-    function createNewGame(string memory gameName, string memory description, uint fee, string[] memory playersList) public {
+    function createGame(string memory _gameName, string memory _description, uint _fee, string[] memory _playersList) external {
         Funzofi game = new Funzofi(
-            gameName,
-            description,
-            fee,
-            playersList
+            _gameName,
+            _description,
+            _fee,
+            _playersList
         );
-        FunzofiArray.push(game);
+        FunzofiGames.push(game);
+        emit GameCreated(
+            FunzofiGames.length,
+            address(game)
+        );
     }
-
-    
-
 }
