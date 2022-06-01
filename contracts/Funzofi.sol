@@ -151,7 +151,7 @@ contract Funzofi {
         }
     }
 
-    function getWinnersList() public {
+    function getWinnersList() public onlyOwner {
         require(
             gameStatus == status.ENDED,
             "Sorry! The Game hasn't ended yet ended"
