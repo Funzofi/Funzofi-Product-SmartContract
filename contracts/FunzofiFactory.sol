@@ -16,11 +16,19 @@ contract Factory {
         address gameAddress
     );
 
+    modifier onlyOwner(){
+        require(
+            owner == msg.sender,
+            "Sorry the owner can only access"
+        );
+        _;
+    }
+
     constructor() {
         owner = msg.sender;
     }
 
-    function createGame(string memory _gameName, string memory _description, uint _fee, string[] memory _playersList) public {
+    function createGame(string memory _gameName, string memory _description, uint _fee, string[] memory _playersList) public onlyOwner {
         Funzofi game = new Funzofi(
             _gameName,
             _description,
@@ -34,35 +42,35 @@ contract Factory {
         );
     }
 
-    function startGame(uint _gameIndex) public {
+    function startGame(uint _gameIndex) public onlyOwner {
         Funzofi(payable(address(FunzofiGames[_gameIndex]))).startGame();
     }
 
-    function cancelGame(uint _gameIndex) public {
+    function cancelGame(uint _gameIndex) public onlyOwner {
         Funzofi(payable(address(FunzofiGames[_gameIndex]))).cancelGame();
     }
 
-    function endGame(uint _gameIndex) public {
+    function endGame(uint _gameIndex) public onlyOwner {
         Funzofi(payable(address(FunzofiGames[_gameIndex]))).endGame();
     }
 
-    function updateScore(uint _gameIndex, Funzofi.player[] memory _data) public {
+    function updateScore(uint _gameIndex, Funzofi.player[] memory _data) public onlyOwner {
         Funzofi(payable(address(FunzofiGames[_gameIndex]))).updateScore(_data);
     }
 
-    function declareGameWinner(uint _gameIndex) public {
+    function declareGameWinner(uint _gameIndex) public onlyOwner {
         Funzofi(payable(address(FunzofiGames[_gameIndex]))).declareWinner();
     }
 
-    function generateWinners(uint _gameIndex) public {
+    function generateWinners(uint _gameIndex) public onlyOwner {
         Funzofi(payable(address(FunzofiGames[_gameIndex]))).getWinnersList();
     }
 
-    function getBalance() public view returns(uint) {
+    function getBalance() public onlyOwner view returns(uint) {
         return address(this).balance;
     }
 
-    function withdrawBalance(uint _amount) public {
+    function withdrawBalance(uint _amount) public onlyOwner {
         payable(owner).transfer(_amount * 1 wei);
     }
 
