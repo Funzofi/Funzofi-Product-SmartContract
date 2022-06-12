@@ -3,7 +3,7 @@ pragma solidity ^0.8.13;
 
 import './Funzofi.sol';
 
-contract Factory {
+contract FunzofiFactory {
     Funzofi[] public FunzofiGames;
     address public owner;
 
@@ -28,7 +28,7 @@ contract Factory {
         owner = msg.sender;
     }
 
-    function createGame(string memory _gameName, string memory _description, uint _fee, string[] memory _playersList) public onlyOwner {
+    function createGame(string memory _gameName, string memory _description, uint _fee, Funzofi.player[] memory _playersList) public onlyOwner {
         Funzofi game = new Funzofi(
             _gameName,
             _description,

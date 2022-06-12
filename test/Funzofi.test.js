@@ -10,7 +10,16 @@ beforeEach( async () => {
   contract      = await Funzofi.deploy(
     "CSK vs KKR", "test description", 
     ethers.utils.parseEther("1.0"), 
-    ['dhoni', 'mahi', 'chahal', 'sachin']
+    [
+      ['id01','dhoni', 0, true],
+      ['id02','mahi', 0, true],
+      ['id03','virat', 0, true],
+      ['id04','chahal', 0, true],
+      ['id05','sachin', 0, true],
+      ['id06','yuvraj', 0, true],
+      ['id07','shami', 0, true],
+      ['id08','kale', 0, true],
+    ]
   );
   await contract.deployed();
 });
@@ -20,8 +29,8 @@ describe("Funzofi Contract Tests", () => {
     const name      = await contract.name();
     const details   = await contract.gameDetails();
     const entryFee  = ethers.utils.formatEther(await contract.entryFee());
-    const player1   = await contract.players('dhoni');
-    const player2   = await contract.players('test');
+    const player1   = await contract.players('id01');
+    const player2   = await contract.players('id00');
 
     assert(name == 'CSK vs KKR' && details == 'test description' && entryFee == 1);
     expect(player1.present).to.equal(true);
@@ -43,7 +52,7 @@ describe("Funzofi Contract Tests", () => {
   });
 
   it("Entry function", async () => {
-    team = ['dhoni', 'mahi', 'sachin'];
+    team = ['id01', 'id02', 'id03'];
     await contract.startGame();
     await contract.connect(accounts[1]).enterGame(
       team,
@@ -55,13 +64,14 @@ describe("Funzofi Contract Tests", () => {
   it("Update Score Check", async () => {
     await contract.startGame();
     await contract.updateScore([
-      ['dhoni', 20, true], 
-      ['mahi', 10, true]
+      ['id01','dhoni', 20, true],
+      ['id02','mahi', 10, true],
+      ['id03','virat', 0, true],
     ]);
 
-    const player1 = await contract.players('dhoni');
-    const player2 = await contract.players('chahal');
-    const player3 = await contract.players('mahi');
+    const player1 = await contract.players('id01');
+    const player2 = await contract.players('id03');
+    const player3 = await contract.players('id02');
 
     expect(player1.score).to.equal(20);
     expect(player2.score).to.equal(0);
@@ -69,7 +79,7 @@ describe("Funzofi Contract Tests", () => {
   });
 
   it("Endgame result check", async () => {
-    team = ['dhoni', 'mahi', 'sachin'];
+    team = ['id03', 'id02', 'id01'];
     await contract.startGame();
     await contract.connect(accounts[1]).enterGame(
       team,
@@ -77,8 +87,8 @@ describe("Funzofi Contract Tests", () => {
     );
 
     await contract.updateScore([
-      ['dhoni', 20, true], 
-      ['mahi', 10, true]
+      ['id01','dhoni', 20, true],
+      ['id02','mahi', 10, true],
     ]);
 
     await contract.endGame();
@@ -89,10 +99,10 @@ describe("Funzofi Contract Tests", () => {
   });
 
   it("Winner declaration check", async () => {
-    team1 = ['dhoni', 'mahi', 'sachin'];
-    team2 = ['mahi', 'chahal'];
-    team3 = ['sachin', 'chahal'];
-    team4 = ['chahal'];
+    team1 = ['id01', 'id02', 'id05'];
+    team2 = ['id02', 'id04'];
+    team3 = ['id05', 'id04'];
+    team4 = ['id04'];
     await contract.startGame();
     await contract.connect(accounts[3]).enterGame(
       team3,
@@ -112,10 +122,10 @@ describe("Funzofi Contract Tests", () => {
     );
 
     await contract.updateScore([
-      ['dhoni', 20, true], 
-      ['mahi', 10, true],
-      ['chahal', 5, true],
-      ['sachin', 2, true]
+      ['id01','dhoni', 20, true],
+      ['id02','mahi', 10, true],
+      ['id04','chahal', 5, true],
+      ['id05','sachin', 2, true],
     ]);
 
     await contract.endGame();

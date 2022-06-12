@@ -6,6 +6,7 @@ contract Funzofi {
     // custom datatype using structs
     struct player {
         string  playerId;
+        string  playerName;
         int     score;
         bool    present;
     }
@@ -72,7 +73,7 @@ contract Funzofi {
             quickSort(arr, i, right);
     }
 
-    constructor(string memory gameName, string memory description, uint fee, string[] memory playersList) {
+    constructor(string memory gameName, string memory description, uint fee, player[] memory playersList) {
         name        = gameName;
         gameDetails = description;
         entryFee    = fee;
@@ -81,7 +82,7 @@ contract Funzofi {
 
         // Loading the players data and initializing with 0 score
         for(uint i=0; i<playersList.length; i++){
-            players[playersList[i]] = player(playersList[i], 0, true);
+            players[playersList[i].playerId] = player(playersList[i].playerId, playersList[i].playerName, 0, playersList[i].present);
         }
     }
 
@@ -151,7 +152,7 @@ contract Funzofi {
         }
     }
 
-    function getWinnersList() public onlyOwner {
+    function getWinnersList() public {
         require(
             gameStatus == status.ENDED,
             "Sorry! The Game hasn't ended yet ended"
@@ -172,10 +173,7 @@ contract Funzofi {
     }
 
     function destroy() public onlyOwner {
-        require(
-            msg.sender == owner && gameStatus == status.COMPLETED, 
-            "You are not the owner"
-        );
+        require(msg.sender == owner, "You are not the owner");
         selfdestruct(payable(owner));
     }
 
