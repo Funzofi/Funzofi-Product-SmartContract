@@ -3,12 +3,15 @@ const { ethers }          = require("hardhat");
 
 let contract;
 let accounts;
+let FunzofiFactory;
+let FunzofiChildFactory;
 
 // deployment of the factory contract 
 beforeEach( async () => {
     accounts                = await ethers.getSigners();
-    const FunzofiFactory    = await ethers.getContractFactory("FunzofiFactory");
-    contract                = await FunzofiFactory.deploy();
+    FunzofiFactory          = await ethers.getContractFactory("FunzofiFactory");
+    FunzofiChildFactory     = await ethers.getContractFactory("Funzofi");
+    contract                = FunzofiFactory.deploy();
     await contract.deployed();
 });
 
@@ -38,6 +41,10 @@ describe("Factory Contract Tests", () => {
         } catch (err) {
             assert(false, err);
         }
+        const addr = await contract.FunzofiGames(0);
+        const FunzofiChildContract  = await FunzofiChildFactory.attach(addr);
+        const name = await FunzofiChildContract.name();
+        expect(name).to.equal("CSK vs KKR");
         
     });
 
