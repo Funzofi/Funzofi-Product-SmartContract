@@ -42,6 +42,10 @@ contract FunzofiFactory {
         );
     }
 
+    function getGames() public view returns(Funzofi[] memory) {
+        return FunzofiGames;
+    }
+
     function startGame(uint _gameIndex) public onlyOwner {
         Funzofi(payable(address(FunzofiGames[_gameIndex]))).startGame();
     }

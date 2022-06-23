@@ -78,6 +78,25 @@ describe("Factory Contract Tests", () => {
         expect(gameStat).to.equal(1);
     });
 
+    it("Getgames function check for factory", async () => {
+        await contract.createGame(
+            "CSK vs KKR", "test description", 
+            ethers.utils.parseEther("1.0"), 
+            [
+            ['id01','dhoni', 0, true],
+            ['id02','mahi', 0, true],
+            ['id03','virat', 0, true],
+            ['id04','chahal', 0, true],
+            ['id05','sachin', 0, true],
+            ['id06','yuvraj', 0, true],
+            ['id07','shami', 0, true],
+            ['id08','kale', 0, true],
+            ]
+        );
+        const data = await contract.getGames();
+        expect(data.length).to.equal(2);
+    });
+
     it("Update score function check in factory format", async () => {
         try {
             await contract.startGame(0);
