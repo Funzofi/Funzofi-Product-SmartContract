@@ -9,12 +9,8 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const Funzofi = await hre.ethers.getContractFactory("Funzofi");
-  const funzofi = await Funzofi.deploy(
-    "CSK vs KKR", "test description", 
-    ethers.utils.parseEther("1.0"), 
-    ['dhoni', 'mahi', 'chahal', 'sachin']
-  );
+  const Funzofi = await hre.ethers.getContractFactory("FunzofiFactory");
+  const funzofi = await Funzofi.deploy();
 
   await funzofi.deployed();
 
