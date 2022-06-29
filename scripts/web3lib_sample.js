@@ -1,5 +1,6 @@
+const Web3 = require('web3');
+const HDWalletProvider = require("@truffle/hdwallet-provider");
 require('dotenv').config();
-const { ethers } = require('ethers');
 
 const contractAddress = "0xbaCCd71C5E48a55C86f3efe4b9E45eBcC75826d4";
 const artifact = require("../artifacts/contracts/FunzofiFactory.sol/FunzofiFactory.json")
@@ -8,13 +9,18 @@ const providerOrUrl = {
     rinkeby : process.env.RINKEBY
 }
 
-let provider = new ethers.providers.JsonRpcProvider(providerOrUrl['mumbai']);
-const signer = new ethers.Wallet(process.env.PVT_KEY, provider);
-const contract_write = new ethers.Contract(contractAddress, artifact.abi, signer);
-const fee = ethers.utils.parseEther("1.0");
+let provider = new HDWalletProvider({
+    privateKeys: [process.env.PVT_KEY],
+    providerOrUrl: providerOrUrl['mumbai'],
+});
 
-async function callContract() {
-    await contract_write.createGame("CSK v/s K", "test game n", fee, [
+
+async function callContract(){
+    const web3 = new Web3(provider);
+    const accounts = await web3.eth.getAccounts();
+    const fee = Web3.utils.toWei('1', 'ether');
+    const contract = new web3.eth.Contract(artifact.abi, contractAddress);
+    await contract.methods.createGame("CSK v/s K", "test game n", fee, [
         ['id01','dhoni', 0, true],
         ['id02','mahi', 0, true],
         ['id03','virat', 0, true],
@@ -23,15 +29,19 @@ async function callContract() {
         ['id06','yuvraj', 0, true],
         ['id07','shami', 0, true],
         ['id08','kale', 0, true],
-    ]).catch(err => {
+    ]).send({
+        from: accounts[0],
+    })
+    .catch(err => {
         console.log(err);
-    });   
+    });
 }
-
 
 async function main(){
     await callContract();
     console.log("completed");
+
+    provider.engine.stop();
 }
 
 main()
