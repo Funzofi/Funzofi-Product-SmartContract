@@ -37,7 +37,7 @@ contract FunzofiFactory {
         );
         FunzofiGames.push(game);
         emit GameCreated(
-            FunzofiGames.length,
+            FunzofiGames.length - 1,
             address(game)
         );
     }
