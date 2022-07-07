@@ -172,6 +172,14 @@ contract Funzofi {
         payable(gameResult[0].userAddress).transfer(prizePool * 1 wei);
     }
 
+    function getResultList() public view returns(entry[] memory) {
+        require(
+            gameStatus == status.COMPLETED,
+            "Sorry the winner list generation haven't been completed"
+        );
+        return gameResult;
+    }
+
     function destroy() public onlyOwner {
         require(msg.sender == owner, "You are not the owner");
         selfdestruct(payable(owner));
