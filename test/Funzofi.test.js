@@ -92,7 +92,7 @@ describe("Funzofi Contract Tests", () => {
     ]);
 
     await contract.endGame();
-    expect(await contract.gameStatus()).to.equal(2);
+    expect(await contract.gameStatus()).to.equal(3);
     const entryData = await contract.entries(0);
     expect(entryData.score).to.equal(30);
     

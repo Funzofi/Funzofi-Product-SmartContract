@@ -20,6 +20,7 @@ contract Funzofi {
     enum status {
         NOT_STARTED,
         ON_GOING,
+        ENTRY_FREEZED,
         ENDED,
         COMPLETED
     }
@@ -118,6 +119,14 @@ contract Funzofi {
             "Sorry! Either the game has already started or it has ended"
         );
         gameStatus = status.ON_GOING;
+    }
+
+    function freezeEntries() public onlyOwner {
+        require(
+            gameStatus == status.ON_GOING,
+            "Sorry! Either the game has already started or it has ended"
+        );
+        gameStatus = status.ENTRY_FREEZED;
     }
 
     function cancelGame() public onlyOwner {
