@@ -74,6 +74,10 @@ contract Funzofi {
     }
 
     constructor(string memory gameName, string memory description, uint fee, player[] memory playersList) {
+        require(
+            fee > 0, 
+            "Entry fee should be greater than 0"
+        );
         name        = gameName;
         gameDetails = description;
         entryFee    = fee;
