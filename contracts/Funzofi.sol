@@ -193,6 +193,10 @@ contract Funzofi {
         return gameResult;
     }
 
+    function getEntriesList() public view returns(entry[] memory) {
+        return entries;
+    }
+
     function destroy() public onlyOwner {
         require(msg.sender == owner, "You are not the owner");
         selfdestruct(payable(owner));
