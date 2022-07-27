@@ -1,7 +1,7 @@
 require('dotenv').config();
 const { ethers } = require('ethers');
 
-const contractAddress = "0xbaCCd71C5E48a55C86f3efe4b9E45eBcC75826d4";
+const contractAddress = "0x69564e027017eDA06E3Fd1dd06008AA6eeB4c81c";
 const artifact = require("../artifacts/contracts/FunzofiFactory.sol/FunzofiFactory.json")
 const providerOrUrl = {
     mumbai: process.env.MUMBAI,
@@ -9,7 +9,7 @@ const providerOrUrl = {
 }
 
 async function callContract() {
-    let provider = new ethers.providers.JsonRpcProvider(providerOrUrl['mumbai']);
+    let provider = new ethers.providers.JsonRpcProvider(providerOrUrl['rinkeby']);
     const signer = new ethers.Wallet(process.env.PVT_KEY, provider);
     const contract_write = new ethers.Contract(contractAddress, artifact.abi, signer);
 
