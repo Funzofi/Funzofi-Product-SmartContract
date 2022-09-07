@@ -21,6 +21,7 @@ contract CSGO {
     enum status {
         NOT_STARTED,
         ON_GOING,
+        ENTRY_FREEZED,
         ENDED,
         COMPLETED
     }
@@ -31,14 +32,14 @@ contract CSGO {
     address public owner;
 
     // all the variables holding the match data
-    status public matchStatus;
+    status public gameStatus;
     uint256 public prizePool = 0;
     uint256 public entryFee;
 
     mapping(string => player) public players; //  the players variable consists of the id of the players and, their kills, assists and mvps
     mapping(address => uint256) public users; //  the users variable keep track of the number of entries from a single account
     entry[] public entries; //  the entries variable consits of the team data formed by the user for a particular entry
-    entry[] public matchResult; //  the matchResult variable consits of the final rank list of the team along with their score in a sorted manner
+    entry[] public gameResult; //  the gameResult variable consits of the final rank list of the team along with their score in a sorted manner
 
     // Modifier to give access only to the owner of the contract
     modifier onlyOwner() {
@@ -85,7 +86,7 @@ contract CSGO {
         gameName = _gameName;
         matchID = _matchID;
         entryFee = fee;
-        matchStatus = status.NOT_STARTED;
+        gameStatus = status.NOT_STARTED;
         owner = msg.sender;
 
         // Loading the players data and initializing with 0 kills, 0 assists, 0 mvps
@@ -101,7 +102,7 @@ contract CSGO {
 
     function enterGame(string[] memory teamList) public payable {
         require(
-            matchStatus == status.ON_GOING && users[msg.sender] < 5,
+            gameStatus == status.ON_GOING && users[msg.sender] < 5,
             "Sorry! You have exceeded the number of entries or Game hasn't started"
         );
         require(msg.value == (entryFee * 1 wei), "Sorry! Incorrect entry fee");
@@ -120,10 +121,10 @@ contract CSGO {
 
     function startGame() public onlyOwner {
         require(
-            matchStatus == status.NOT_STARTED,
+            gameStatus == status.NOT_STARTED,
             "Sorry! Either the game has already started or it has ended"
         );
-        matchStatus = status.ON_GOING;
+        gameStatus = status.ON_GOING;
     }
 
     function cancelGame() public onlyOwner {
@@ -132,12 +133,20 @@ contract CSGO {
         }
     }
 
+    function freezeEntries() public onlyOwner {
+        require(
+            gameStatus == status.ON_GOING,
+            "Sorry! Either the game has already started or it has ended"
+        );
+        gameStatus = status.ENTRY_FREEZED;
+    }
+
     function endGame() public onlyOwner {
         require(
-            matchStatus == status.ON_GOING,
+            gameStatus == status.ON_GOING,
             "Sorry! Either the game has not already started or it has ended"
         );
-        matchStatus = status.ENDED;
+        gameStatus = status.ENDED;
 
         for (uint256 i = 0; i < entries.length; i++) {
             string[] memory data = entries[i].team;
@@ -150,10 +159,7 @@ contract CSGO {
     }
 
     function updateScore(player[] memory data) public onlyOwner {
-        require(
-            matchStatus == status.ON_GOING,
-            "Sorry! The hasn't started yet"
-        );
+        require(gameStatus == status.ON_GOING, "Sorry! The hasn't started yet");
         for (uint256 i = 0; i < data.length; i++) {
             if (players[data[i].playerId].present) {
                 players[data[i].playerId].kills = data[i].kills;
@@ -166,22 +172,34 @@ contract CSGO {
 
     function getWinnersList() public {
         require(
-            matchStatus == status.ENDED,
+            gameStatus == status.ENDED,
             "Sorry! The Game hasn't ended yet ended"
         );
         entry[] memory data = sort(entries);
         for (uint256 i = 0; i < data.length; i++) {
-            matchResult.push(data[i]);
+            gameResult.push(data[i]);
         }
-        matchStatus = status.COMPLETED;
+        gameStatus = status.COMPLETED;
     }
 
     function declareWinner() public onlyOwner {
         require(
-            matchStatus == status.COMPLETED,
+            gameStatus == status.COMPLETED,
             "Sorry the winner list generation haven't been completed"
         );
-        payable(matchResult[0].userAddress).transfer(prizePool * 1 wei);
+        payable(gameResult[0].userAddress).transfer(prizePool * 1 wei);
+    }
+
+    function getResultList() public view returns (entry[] memory) {
+        require(
+            gameStatus == status.COMPLETED,
+            "Sorry the winner list generation haven't been completed"
+        );
+        return gameResult;
+    }
+
+    function getEntriesList() public view returns (entry[] memory) {
+        return entries;
     }
 
     function destroy() public onlyOwner {
