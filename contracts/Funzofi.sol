@@ -20,6 +20,7 @@ contract Funzofi {
     enum status {
         NOT_STARTED,
         ON_GOING,
+        ENTRY_FREEZED,
         ENDED,
         COMPLETED
     }
@@ -74,6 +75,10 @@ contract Funzofi {
     }
 
     constructor(string memory gameName, string memory description, uint fee, player[] memory playersList) {
+        require(
+            fee > 0, 
+            "Entry fee should be greater than 0"
+        );
         name        = gameName;
         gameDetails = description;
         entryFee    = fee;
@@ -114,6 +119,14 @@ contract Funzofi {
             "Sorry! Either the game has already started or it has ended"
         );
         gameStatus = status.ON_GOING;
+    }
+
+    function freezeEntries() public onlyOwner {
+        require(
+            gameStatus == status.ON_GOING,
+            "Sorry! Either the game has already started or it has ended"
+        );
+        gameStatus = status.ENTRY_FREEZED;
     }
 
     function cancelGame() public onlyOwner {
@@ -170,6 +183,18 @@ contract Funzofi {
             "Sorry the winner list generation haven't been completed"
         );
         payable(gameResult[0].userAddress).transfer(prizePool * 1 wei);
+    }
+
+    function getResultList() public view returns(entry[] memory) {
+        require(
+            gameStatus == status.COMPLETED,
+            "Sorry the winner list generation haven't been completed"
+        );
+        return gameResult;
+    }
+
+    function getEntriesList() public view returns(entry[] memory) {
+        return entries;
     }
 
     function destroy() public onlyOwner {
