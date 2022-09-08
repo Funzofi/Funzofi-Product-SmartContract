@@ -76,13 +76,13 @@ contract Cricket {
     }
 
     constructor(
-        string memory gameName,
+        string memory _name,
         string memory description,
         uint256 fee,
         player[] memory playersList
     ) {
         require(fee > 0, "Entry fee should be greater than 0");
-        name = gameName;
+        name = _name;
         gameDetails = description;
         entryFee = fee;
         gameStatus = status.NOT_STARTED;

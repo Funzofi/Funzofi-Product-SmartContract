@@ -5,6 +5,7 @@ contract CSGO {
     // to store the pleyer information
     struct player {
         string playerId;
+        string playerName;
         int256 kills;
         int256 deaths;
         bool present;
@@ -27,8 +28,8 @@ contract CSGO {
     }
 
     // all the static variables holding the contract details
-    string public gameName;
-    string public matchID;
+    string public name;
+    string public gameDetails;
     address public owner;
 
     // all the variables holding the match data
@@ -79,12 +80,12 @@ contract CSGO {
 
     constructor(
         string memory _gameName,
-        string memory _matchID,
+        string memory _gameDetails,
         uint256 fee,
         player[] memory playersList
     ) {
-        gameName = _gameName;
-        matchID = _matchID;
+        name = _gameName;
+        gameDetails = _gameDetails;
         entryFee = fee;
         gameStatus = status.NOT_STARTED;
         owner = msg.sender;
@@ -93,6 +94,7 @@ contract CSGO {
         for (uint256 i = 0; i < playersList.length; i++) {
             players[playersList[i].playerId] = player(
                 playersList[i].playerId,
+                playersList[i].playerName,
                 0,
                 0,
                 playersList[i].present
