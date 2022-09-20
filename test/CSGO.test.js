@@ -6,25 +6,25 @@ let accounts;
 
 beforeEach( async () => {
   accounts      = await ethers.getSigners();
-  const Funzofi = await ethers.getContractFactory("Funzofi");
-  contract      = await Funzofi.deploy(
-    "CSK vs KKR", "test description", 
+  const CSGO = await ethers.getContractFactory("CSGO");
+  contract      = await CSGO.deploy(
+    "NAVI vs NIP", "test description", 
     ethers.utils.parseEther("1.0"), 
     [
-      ['id01','dhoni', 0, true],
-      ['id02','mahi', 0, true],
-      ['id03','virat', 0, true],
-      ['id04','chahal', 0, true],
-      ['id05','sachin', 0, true],
-      ['id06','yuvraj', 0, true],
-      ['id07','shami', 0, true],
-      ['id08','kale', 0, true],
+      ['id01','s1mple', 0,0, true],
+      ['id02','b1t', 0, 0,true],
+      ['id03','electron1c', 0,0, true],
+      ['id04','dev1ce', 0, 0,true],
+      ['id05','zywoo', 0, 0,true],
+      ['id06','forest', 0, 0,true],
+      ['id07','perfecto', 0, 0,true],
+      ['id08','niko', 0, 0,true],
     ]
   );
   await contract.deployed();
 });
 
-describe("Funzofi Contract Tests", () => {
+describe("CSGO Contract Tests", () => {
   it("Deployment Test and Data Check", async () => {
     const name      = await contract.name();
     const details   = await contract.gameDetails();
@@ -32,9 +32,10 @@ describe("Funzofi Contract Tests", () => {
     const player1   = await contract.players('id01');
     const player2   = await contract.players('id00');
 
-    assert(name == 'CSK vs KKR' && details == 'test description' && entryFee == 1);
+    assert(name == 'NAVI vs NIP' && details == 'test description' && entryFee == 1);
     expect(player1.present).to.equal(true);
-    expect(player1.score).to.equal(0);
+    expect(player1.kills).to.equal(0);
+    expect(player1.deaths).to.equal(0);
     expect(player2.present).to.equal(false);
   });
 
@@ -64,18 +65,21 @@ describe("Funzofi Contract Tests", () => {
   it("Update Score Check", async () => {
     await contract.startGame();
     await contract.updateScore([
-      ['id01','dhoni', 20, true],
-      ['id02','mahi', 10, true],
-      ['id03','virat', 0, true],
+      ['id01','s1mple', 20,0, true],
+      ['id02','b1t', 10,0, true],
+      ['id03','electron1c', 0,0, true],
     ]);
 
     const player1 = await contract.players('id01');
-    const player2 = await contract.players('id03');
-    const player3 = await contract.players('id02');
+    const player2 = await contract.players('id02');
+    const player3 = await contract.players('id03');
 
-    expect(player1.score).to.equal(20);
-    expect(player2.score).to.equal(0);
-    expect(player3.score).to.equal(10);
+    expect(player1.kills).to.equal(20);
+    expect(player1.deaths).to.equal(0);
+    expect(player2.kills).to.equal(10);
+    expect(player2.deaths).to.equal(0);
+    expect(player3.kills).to.equal(0);
+    expect(player3.deaths).to.equal(0);
   });
 
   it("Endgame result check", async () => {
@@ -87,14 +91,14 @@ describe("Funzofi Contract Tests", () => {
     );
 
     await contract.updateScore([
-      ['id01','dhoni', 20, true],
-      ['id02','mahi', 10, true],
+      ['id01','s1mple', 20, 0,true],
+      ['id02','b1t', 10,0, true],
     ]);
 
     await contract.endGame();
     expect(await contract.gameStatus()).to.equal(3);
     const entryData = await contract.entries(0);
-    expect(entryData.score).to.equal(30);
+    expect(entryData.score).to.equal(60);
     
   });
 
@@ -122,16 +126,16 @@ describe("Funzofi Contract Tests", () => {
     );
 
     await contract.updateScore([
-      ['id01','dhoni', 20, true],
-      ['id02','mahi', 10, true],
-      ['id04','chahal', 5, true],
-      ['id05','sachin', 2, true],
+      ['id01','s1mple', 20,1, true],
+      ['id02','b1t', 10, 0,true],
+      ['id04','dev1ce', 5, 0,true],
+      ['id05','zywoo', 2, 0,true],
     ]);
 
     await contract.endGame();
     await contract.getWinnersList();
     const data = await contract.getResultList();
-    expect(data[0].score).to.equal(32);
+    expect(data[0].score).to.equal(31);
   });
 
 });
