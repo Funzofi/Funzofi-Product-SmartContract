@@ -111,12 +111,12 @@ describe("Cricket Factory Contract Tests", () => {
         }
 
         const player1 = await CricketChildContract.players('id01');
-        const player2 = await CricketChildContract.players('id03');
-        const player3 = await CricketChildContract.players('id02');
+        const player2 = await CricketChildContract.players('id02');
+        const player3 = await CricketChildContract.players('id03');
 
         expect(player1.score).to.equal(20);
-        expect(player2.score).to.equal(0);
-        expect(player3.score).to.equal(10);
+        expect(player2.score).to.equal(10);
+        expect(player3.score).to.equal(0);
     });
 
 });

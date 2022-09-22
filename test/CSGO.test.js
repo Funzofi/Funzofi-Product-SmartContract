@@ -135,7 +135,7 @@ describe("CSGO Contract Tests", () => {
     await contract.endGame();
     await contract.getWinnersList();
     const data = await contract.getResultList();
-    expect(data[0].score).to.equal(31);
+    expect(data[0].score).to.equal(63);
   });
 
 });
