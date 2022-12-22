@@ -3,16 +3,16 @@ const { ethers }          = require("hardhat");
 
 let contract;
 let accounts;
-let FunzofiFactory;
-let FunzofiChildFactory;
-let FunzofiChildContract;
+let FactoryContract;
+let CricketChildFactory;
+let CricketChildContract;
 
 // deployment of the factory contract 
 beforeEach( async () => {
     accounts                = await ethers.getSigners();
-    FunzofiFactory          = await ethers.getContractFactory("FunzofiFactory");
-    FunzofiChildFactory     = await ethers.getContractFactory("Funzofi");
-    contract                = await FunzofiFactory.deploy();
+    FactoryContract          = await ethers.getContractFactory("CricketFactory");
+    CricketChildFactory     = await ethers.getContractFactory("Cricket");
+    contract                = await FactoryContract.deploy();
     await contract.deployed();
 
     await contract.createGame(
@@ -30,17 +30,17 @@ beforeEach( async () => {
         ]
     );
 
-    const addr              = await contract.FunzofiGames(0);
-    FunzofiChildContract    = FunzofiChildFactory.attach(addr);
+    const addr              = await contract.CricketGames(0);
+    CricketChildContract    = CricketChildFactory.attach(addr);
 });
 
-describe("Factory Contract Tests", () => {
+describe("Cricket Factory Contract Tests", () => {
     it("Deployment & Owner Check", async () => {
         const owner = await contract.owner();
         expect(owner).to.equal(accounts[0].address);
     });
     
-    it("Funzofi Child Deployment Check", async () => {
+    it("Cricket Child Deployment Check", async () => {
         try {
             await contract.createGame(
                 "CSK vs KKR", "test description", 
@@ -61,7 +61,7 @@ describe("Factory Contract Tests", () => {
             assert(false, err);
         }
         
-        const name = await FunzofiChildContract.name();
+        const name = await CricketChildContract.name();
         expect(name).to.equal("CSK vs KKR");
         
     });
@@ -74,7 +74,7 @@ describe("Factory Contract Tests", () => {
             assert(false, err);
         }
 
-        const gameStat = await FunzofiChildContract.gameStatus();
+        const gameStat = await CricketChildContract.gameStatus();
         expect(gameStat).to.equal(1);
     });
 
@@ -110,14 +110,13 @@ describe("Factory Contract Tests", () => {
             assert(false, err);
         }
 
-        const player1 = await FunzofiChildContract.players('id01');
-        const player2 = await FunzofiChildContract.players('id03');
-        const player3 = await FunzofiChildContract.players('id02');
+        const player1 = await CricketChildContract.players('id01');
+        const player2 = await CricketChildContract.players('id02');
+        const player3 = await CricketChildContract.players('id03');
 
         expect(player1.score).to.equal(20);
-        expect(player2.score).to.equal(0);
-        expect(player3.score).to.equal(10);
+        expect(player2.score).to.equal(10);
+        expect(player3.score).to.equal(0);
     });
 
 });
-
